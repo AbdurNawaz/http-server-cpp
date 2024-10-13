@@ -40,7 +40,26 @@ int main()
         return 1;
     }
 
-    std::string response = "HTTP/1.1 200 OK\r\n\r\n";
+    std::string request(1024, '\0');
+    size_t recvd = recv(client_fd, (void *)&request[0], request.size(), 0);
+    if (recvd < 0)
+    {
+        std::cerr << "Failed to receive request" << std::endl;
+        return 1;
+    }
+
+    std::cout << request << std::endl;
+
+    std::string response;
+
+    if (request.starts_with("GET / HTTP/1.1"))
+    {
+        response = "HTTP/1.1 200 OK\r\n\r\n";
+    }
+    else
+    {
+        response = "HTTP/1.1 404 Not Found\r\n\r\n";
+    }
     send(client_fd, response.c_str(), response.length(), 0);
 
     close(server_fd);
