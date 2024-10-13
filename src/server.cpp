@@ -20,7 +20,20 @@ int main()
     if (bind(server_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0)
     {
         std::cerr << "Failed to bind to port " << 4221 << std::endl;
+        return 1;
     }
+
+    int connection_backlog = 5;
+    if (listen(server_fd, connection_backlog) < 0)
+    {
+        std::cerr << "Failed to listen" << std::endl;
+        return 1;
+    }
+
+    struct sockaddr_in client_addr;
+    int client_addr_len = sizeof(client_addr);
+
+    accept(server_fd, (sockaddr *)&client_addr, (socklen_t *)&client_addr_len);
 
     return 0;
 }
