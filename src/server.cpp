@@ -33,7 +33,17 @@ int main()
     struct sockaddr_in client_addr;
     int client_addr_len = sizeof(client_addr);
 
-    accept(server_fd, (sockaddr *)&client_addr, (socklen_t *)&client_addr_len);
+    int client_fd = accept(server_fd, (sockaddr *)&client_addr, (socklen_t *)&client_addr_len);
+    if (client_fd < 0)
+    {
+        std::cerr << "Failed to accept response" << std::endl;
+        return 1;
+    }
+
+    std::string response = "HTTP/1.1 200 OK\r\n\r\n";
+    send(client_fd, response.c_str(), response.length(), 0);
+
+    close(server_fd);
 
     return 0;
 }
